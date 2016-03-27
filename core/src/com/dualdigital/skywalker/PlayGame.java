@@ -72,8 +72,12 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
     @Override
     public void update(float dt) {
         handleInput();
-        if(playerModel != null && playerModel.getPosition().z > -25f)
+        if(playerModel != null && playerModel.getPosition().z > -25f){
             cam.position.add(0, 0, 20 * dt);
+            if(isGameOver())
+                gcm.set(new EndGame(gcm));
+        }
+
         cam.update();
         ArrayList<Block> tempblocks;
         tempblocks = (ArrayList<Block>) blocks.clone();
@@ -139,6 +143,12 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
         blocks.clear();
         collisionConfig.dispose();
         dispatcher.dispose();
+    }
+
+    private boolean isGameOver(){
+        if(playerModel.getPosition().y == -1)
+            return true;
+        return false;
     }
 
     private void createBlocks(){
