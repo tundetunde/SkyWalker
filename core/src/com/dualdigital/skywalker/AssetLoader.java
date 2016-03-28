@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 
 /**
  * Created by tunde_000 on 20/03/2016.
@@ -26,8 +27,9 @@ public class AssetLoader {
     public static Texture background, splash;
     public static Skin menuSkin;
     public static ImageButton.ImageButtonStyle playStyle;
-    public static Model shortBoxModel, longBoxModel, mediumBoxModel, superLongBoxModel, playerModel;
+    public static Model shortBoxModel, longBoxModel, mediumBoxModel, superLongBoxModel, playerModel, rings;
     public static AssetManager assets;
+    public static boolean modelsLoaded;
 
     public static void load(){
         prefs = Gdx.app.getPreferences("Sky Walker");
@@ -42,11 +44,11 @@ public class AssetLoader {
 
         ModelBuilder modelBuilder = new ModelBuilder();
         shortBoxModel = modelBuilder.createBox(2f, 1f, 5f,
-                new Material(ColorAttribute.createDiffuse(Color.BLUE)),
+                new Material(ColorAttribute.createDiffuse(Color.VIOLET)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         mediumBoxModel = modelBuilder.createBox(2f, 1f, 7f,
-                new Material(ColorAttribute.createDiffuse(Color.PURPLE)),
+                new Material(ColorAttribute.createDiffuse(Color.YELLOW)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         longBoxModel = modelBuilder.createBox(2f, 1f, 10f,
@@ -54,11 +56,13 @@ public class AssetLoader {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         superLongBoxModel = modelBuilder.createBox(2f, 1f, 15f,
-                new Material(ColorAttribute.createDiffuse(Color.RED)),
+                new Material(ColorAttribute.createDiffuse(Color.GREEN)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         assets = new AssetManager();
         assets.load("ship.obj", Model.class);
+        assets.load("ring/untitled.obj", Model.class);
+        modelsLoaded = AssetLoader.assets.update();
         Bullet.init();
         //playerModel = assets.get("ship.obj", Model.class);
     }

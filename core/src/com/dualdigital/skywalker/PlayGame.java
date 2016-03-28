@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Array;
 import com.dualdigital.skywalker.gameobjects.Block;
 import com.dualdigital.skywalker.gameobjects.GameObject;
 import com.dualdigital.skywalker.gameobjects.PlayerModel;
+import com.dualdigital.skywalker.gameobjects.Ring;
 
 import java.util.ArrayList;
 
@@ -39,9 +40,12 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
     private Environment environment;
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private PlayerModel playerModel;
+    private ArrayList<Ring> rings = new ArrayList<Ring>();
     public ArrayList<ModelInstance> instances = new ArrayList<ModelInstance>();
     boolean loading;
+    boolean startingRings = false;
     private boolean collision;
+    public static long score = 0;
 
     protected PlayGame(GameStateManager gcm) {
         super(gcm);
@@ -71,6 +75,8 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
 
     @Override
     public void update(float dt) {
+        if(!startingRings)
+            startingRings = generateStartingRings();
         handleInput();
         if(playerModel != null && playerModel.getPosition().z > -25f){
             cam.position.add(0, 0, 20 * dt);
@@ -80,7 +86,9 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
 
         cam.update();
         ArrayList<Block> tempblocks;
+        ArrayList<Ring> temprings;
         tempblocks = (ArrayList<Block>) blocks.clone();
+        temprings = (ArrayList<Ring>) rings.clone();
         ArrayList<ModelInstance> tempinstances = new ArrayList<ModelInstance>();
 
         if(playerModel != null && tempinstances.isEmpty())
@@ -89,6 +97,12 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
         if(!blocks.isEmpty()){
             if(isVisible(cam, blocks.get(0)) == false){
                 blocks.get(0).setToDead();
+            }
+        }
+
+        if(!rings.isEmpty()){
+            if(isVisible(cam, rings.get(0)) == false){
+                rings.get(0).setToDead();
             }
         }
 
@@ -107,12 +121,26 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
             tempblocks.remove(blocks.get(0));
         }
 
+        if(!rings.isEmpty()){
+            if(rings.get(0).isDead()){
+                Ring ring = new Ring(AssetLoader.rings, new Vector3(blocks.get(blocks.size() - 1).getPosition().x, 1.3f, blocks.get(blocks.size() - 1).getPosition().z), new Vector3(0,0,0));
+                temprings.add(ring);
+                temprings.remove(rings.get(0));
+            }
+        }
+
+
         for(Block block: tempblocks){
             tempinstances.add(block.getModel());
         }
 
+        for(Ring ring: rings){
+            tempinstances.add(ring.getModel());
+        }
+
         instances = tempinstances;
         blocks = tempblocks;
+        rings = temprings;
     }
 
     private Block generateBlock() {
@@ -124,6 +152,7 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
     public void render(SpriteBatch sb) {
         if(loading && AssetLoader.assets.update()){
             AssetLoader.playerModel = AssetLoader.assets.get("ship.obj", Model.class);
+            AssetLoader.rings = AssetLoader.assets.get("ring/untitled.obj", Model.class);
             playerModel = new PlayerModel(AssetLoader.playerModel, new Vector3(blocks.get(0).getPosition().x, 10, blocks.get(0).getPosition().z), new Vector3());
             instances.add(playerModel.getModel());
             loading = false;
@@ -166,7 +195,21 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
         }
     }
 
-    protected boolean isVisible(final Camera cam, final Block instance) {
+    private boolean generateStartingRings(){
+        if(!loading){
+            if(!blocks.isEmpty()){
+                for(Block b: blocks){
+                    Ring r = new Ring(AssetLoader.rings, new Vector3(b.getPosition().x,1.3f,b.getPosition().z), new Vector3(0,0,0));
+                    rings.add(r);
+                    instances.add(r.getModel());
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isVisible(final Camera cam, final GameObject instance) {
         if(cam.position.z > instance.getPosition().z)
             return false;
         return true;

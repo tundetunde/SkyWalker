@@ -26,15 +26,16 @@ import java.util.Random;
  */
 public class Block extends GameObject{
     private BlockType blockType;
+    private Ring ring;
 
-    public static enum BlockType{
+    public enum BlockType{
         Small,
         Medium,
         Long,
         SuperLong
     }
 
-    public static enum Lanes{
+    public enum Lanes{
         Lane1,
         Lane2,
         Lane3,
@@ -45,6 +46,10 @@ public class Block extends GameObject{
         super(model, position, velocity);
         this.blockType = blockType;
         initializeCollisionObjects();
+    }
+
+    public void initializeRings(){
+        ring = new Ring(AssetLoader.rings, new Vector3(position.x, 0f, position.z), new Vector3(0,0,0));
     }
 
     private void initializeCollisionObjects(){
@@ -146,5 +151,9 @@ public class Block extends GameObject{
             default:
                 return BlockType.SuperLong;
         }
+    }
+
+    public BlockType getBlockType(){
+        return blockType;
     }
 }
