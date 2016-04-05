@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  */
 public class Menu extends State {
     private Texture background;
-    private ImageButton playButton;
+    private ImageButton playButton, leaderBoardButton, shareButton, rateButton;
     int cameraWidth = SkyWalker.WIDTH / 2;
     int cameraHeight = SkyWalker.HEIGHT / 2;
     private BitmapFont fontTitle;
@@ -28,6 +28,9 @@ public class Menu extends State {
         stage = new Stage();
         initializeButtons();
         stage.addActor(playButton);
+        stage.addActor(shareButton);
+        stage.addActor(leaderBoardButton);
+        stage.addActor(rateButton);
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -40,6 +43,40 @@ public class Menu extends State {
                 super.clicked(event, x, y);
                 System.out.println("Button Clicked");
                 gcm.set(new PlayGame(gcm));
+            }
+        });
+
+        shareButton = new ImageButton(AssetLoader.shareStyle);
+        shareButton.setPosition(cameraWidth / 6 * 2, cameraHeight / 3 - 30);
+        shareButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                System.out.println("Share Button Clicked");
+                //TheGame.activityMethods.shareScore();
+            }
+        });
+
+        leaderBoardButton = new ImageButton(AssetLoader.scoreStyle);
+        leaderBoardButton.setPosition((cameraWidth / 6) * 3 + 60, cameraHeight / 3 - 30);
+        leaderBoardButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                System.out.println("LeaderBoard: Button Clicked");
+                /*if(SkyWalker.activityMethods.isLoggedInFB())
+                    SkyWalker.activityMethods.startLeaderboardActivity();*/
+            }
+        });
+
+        rateButton = new ImageButton(AssetLoader.rateStyle);
+        rateButton.setPosition((cameraWidth / 6) * 3 + 60, cameraHeight / 2);
+        rateButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                System.out.println("Rate: Button Clicked");
+                Gdx.net.openURI("https://play.google.com/store/apps/details?id=com.dualtech.skywalker.android");
             }
         });
     }

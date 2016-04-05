@@ -26,10 +26,11 @@ public class AssetLoader {
     public static BitmapFont font;
     public static Texture background, splash;
     public static Skin menuSkin;
-    public static ImageButton.ImageButtonStyle playStyle;
+    public static ImageButton.ImageButtonStyle playStyle,scoreStyle, rateStyle,soundStyle, shareStyle;
     public static Model shortBoxModel, longBoxModel, mediumBoxModel, superLongBoxModel, playerModel, rings;
     public static AssetManager assets;
     public static boolean modelsLoaded;
+    private static String appKey = "c76cf67af790f35425d9ba82ed61adce7f59305797ebb995";
 
     public static void load(){
         prefs = Gdx.app.getPreferences("Sky Walker");
@@ -41,6 +42,17 @@ public class AssetLoader {
         playStyle = new ImageButton.ImageButtonStyle();
         playStyle.imageUp = menuSkin.getDrawable("play");
         playStyle.imageDown = menuSkin.getDrawable("playR");
+        rateStyle = new ImageButton.ImageButtonStyle();
+        rateStyle.imageUp = menuSkin.getDrawable("rate");
+        rateStyle.imageDown = menuSkin.getDrawable("rateR");
+        scoreStyle = new ImageButton.ImageButtonStyle();
+        scoreStyle.imageUp = menuSkin.getDrawable("score");
+        scoreStyle.imageDown = menuSkin.getDrawable("scoreR");
+        soundStyle = new ImageButton.ImageButtonStyle();
+        soundStyle.imageUp = menuSkin.getDrawable("sound");
+        shareStyle = new ImageButton.ImageButtonStyle();
+        shareStyle.imageUp = menuSkin.getDrawable("share");
+        shareStyle.imageDown = menuSkin.getDrawable("shareR");
 
         ModelBuilder modelBuilder = new ModelBuilder();
         shortBoxModel = modelBuilder.createBox(2f, 1f, 5f,
@@ -64,7 +76,12 @@ public class AssetLoader {
         assets.load("ring/untitled.obj", Model.class);
         modelsLoaded = AssetLoader.assets.update();
         Bullet.init();
+
         //playerModel = assets.get("ship.obj", Model.class);
+    }
+
+    public static String getAppKey(){
+        return appKey;
     }
 
     public static void dispose(){
