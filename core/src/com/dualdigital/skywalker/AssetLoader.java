@@ -27,10 +27,11 @@ public class AssetLoader {
     public static Texture background, splash;
     public static Skin menuSkin;
     public static ImageButton.ImageButtonStyle playStyle,scoreStyle, rateStyle,soundStyle, shareStyle;
-    public static Model shortBoxModel, longBoxModel, mediumBoxModel, superLongBoxModel, playerModel, rings;
+    public static Model shortBoxModel, longBoxModel, mediumBoxModel, superLongBoxModel, playerModel, rings, skydome, skydomebottom;
     public static AssetManager assets;
     public static boolean modelsLoaded;
     private static String appKey = "c76cf67af790f35425d9ba82ed61adce7f59305797ebb995";
+    private static long score;
 
     public static void load(){
         prefs = Gdx.app.getPreferences("Sky Walker");
@@ -74,10 +75,25 @@ public class AssetLoader {
         assets = new AssetManager();
         assets.load("ship.obj", Model.class);
         assets.load("ring/untitled.obj", Model.class);
+        assets.load("skydome/skydome.g3db", Model.class);
         modelsLoaded = AssetLoader.assets.update();
         Bullet.init();
 
+        if (!prefs.contains("highScore")) {
+            prefs.putLong("highScore", 0);
+        }
         //playerModel = assets.get("ship.obj", Model.class);
+    }
+
+    // Receives an integer and maps it to the String highScore in prefs
+    public static void setHighScore(long val) {
+        prefs.putLong("highScore", val);
+        prefs.flush();
+    }
+
+    // Retrieves the current high score
+    public static long getHighScore() {
+        return prefs.getLong("highScore");
     }
 
     public static String getAppKey(){

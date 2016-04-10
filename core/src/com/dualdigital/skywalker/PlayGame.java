@@ -46,6 +46,7 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
     boolean startingRings = false;
     private boolean collision;
     public static long score = 0;
+    private static ModelInstance skydometop, skydomebottom;
 
     protected PlayGame(GameStateManager gcm) {
         super(gcm);
@@ -84,9 +85,9 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
             startingRings = generateStartingRings();
         handleInput();
         if(playerModel != null && playerModel.getPosition().z > -25f){
-            cam.position.add(0, 0, 20 * dt);
+            //cam.position.add(0, 0, 20 * dt);
             if(isGameOver())
-                gcm.set(new EndGame(gcm));
+                gcm.set(new EndGame(gcm, score));
         }
 
         cam.update();
@@ -98,6 +99,12 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
 
         if(playerModel != null && tempinstances.isEmpty())
             tempinstances.add(playerModel.getModel());
+
+        if(skydometop != null)
+            tempinstances.add(skydometop);
+
+        if(skydomebottom != null)
+            tempinstances.add(skydomebottom);
 
         if(!blocks.isEmpty()){
             if(isVisible(cam, blocks.get(0)) == false){
@@ -120,11 +127,14 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
             }
         }
 
-        if(blocks.get(0).isDead()){
-            Block b = generateBlock();
-            tempblocks.add(b);
-            tempblocks.remove(blocks.get(0));
+        if(!blocks.isEmpty()){
+            if(blocks.get(0).isDead()){
+                Block b = generateBlock();
+                tempblocks.add(b);
+                tempblocks.remove(blocks.get(0));
+            }
         }
+
 
         if(!rings.isEmpty()){
             if(rings.get(0).isDead()){
@@ -158,7 +168,16 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
         if(loading && AssetLoader.assets.update()){
             AssetLoader.playerModel = AssetLoader.assets.get("ship.obj", Model.class);
             AssetLoader.rings = AssetLoader.assets.get("ring/untitled.obj", Model.class);
-            playerModel = new PlayerModel(AssetLoader.playerModel, new Vector3(blocks.get(0).getPosition().x, 10, blocks.get(0).getPosition().z), new Vector3());
+            AssetLoader.skydome = AssetLoader.assets.get("skydome/skydome.g3db", Model.class);
+            AssetLoader.skydomebottom = AssetLoader.assets.get("skydome/skydome.g3db", Model.class);
+            skydometop = new ModelInstance(AssetLoader.skydome);
+            skydometop.transform.scale(10, 1f, 10);
+            instances.add(skydometop);
+            skydomebottom = new ModelInstance(AssetLoader.skydomebottom);
+            skydomebottom.transform.scale(10, 0.1f, 10);
+            skydomebottom.transform.rotate(cam.position, 180f);
+            instances.add(skydomebottom);
+            playerModel = new PlayerModel(AssetLoader.playerModel, new Vector3(blocks.get(0).getPosition().x, 5, blocks.get(0).getPosition().z), new Vector3());
             instances.add(playerModel.getModel());
             loading = false;
         }
@@ -180,7 +199,7 @@ public class PlayGame extends State implements GestureDetector.GestureListener{
     }
 
     private boolean isGameOver(){
-        if(playerModel.getPosition().y == -1)
+        if(playerModel.getPosition().y < -0.5)
             return true;
         return false;
     }

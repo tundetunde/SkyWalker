@@ -27,14 +27,16 @@ public class PlayerModel extends GameObject {
 
     @Override
     public void update(float dt) {
-        position.y -= 0.1;
+        if(position.y > 0)
+            position.y -= 0.1;
         modelInstance.transform.setToTranslation(position.x, position.y, position.z);
         collisionObject.setWorldTransform(modelInstance.transform);
     }
 
     public void update(float dt, boolean collision) {
         if(!collision)
-            position.y -= 3 * dt;
+            //if(position.y > 0)
+                position.y -= 3 * dt;
         position.z += 10 * dt;
         modelInstance.transform.setToTranslation(position.x, position.y, position.z);
         collisionObject.setWorldTransform(modelInstance.transform);
